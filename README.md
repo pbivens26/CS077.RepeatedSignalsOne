@@ -8,6 +8,60 @@ The runner needs to see if a planet has lifeforms. The interface used by the run
 ## Expected and observed tests
 
 ## AI question, change, test result and next step
+Assuming your existing controls are named PacketInput and SignalOutput, you only need these two small additions.
+
+1. MainWindow.xaml
+File: MainWindow.xaml
+Insertion location: Inside the existing <Grid> (or other root layout container), alongside your existing controls.
+
+<Button Content="Reset"
+        x:Name="ResetReceiverButton"
+        Click="ResetReceiverButton_Click" />
+
+You can position it using whatever layout your existing UI already uses (for example, add Grid.Row/Grid.Column if your grid requires them). No other XAML needs to change.
+
+2. MainWindow.xaml.cs
+File: MainWindow.xaml.cs
+Insertion location: Inside the existing MainWindow class, but outside ProcessPackets. Do not modify ProcessPackets.
+
+private void ResetReceiverButton_Click(object sender, RoutedEventArgs e)
+{
+    PacketInput.Text = "PING;PING;DISTRESS;STOP;PING";
+    SignalOutput.Text = "Ready.";
+}
+
+What the pieces mean
+Click="ResetReceiverButton_Click" connects the button's Click event to your C# method. When the user clicks the button, WPF calls that method.
+
+x:Name="ResetReceiverButton" gives the button a name in XAML/C#. You don't actually need the name for this handler, but it identifies the button if you later need to reference it.
+
+private void ResetReceiverButton_Click(object sender, RoutedEventArgs e) is the standard WPF Click-event handler signature:
+
+private — the method is used by this window.
+
+void — it doesn't return a value.
+
+sender — the object that raised the event (the button).
+
+RoutedEventArgs e — WPF's event information for the Click event.
+
+Test
+Change PacketInput.Text to something else, such as STOP;DISTRESS.
+
+Change SignalOutput.Text to something else.
+
+Click Reset.
+
+Expected result:
+
+PacketInput becomes PING;PING;DISTRESS;STOP;PING
+
+SignalOutput becomes Ready.
+
+ProcessPackets remains unchanged.
+
+
+
 <Window x:Class="CS077.RepeatedSignals.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
